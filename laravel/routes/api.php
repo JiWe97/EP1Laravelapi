@@ -26,7 +26,7 @@ route::get('/hello', function () {
 });
 
 route::get('/login', function () {
-    return 'Acces denied, please login';
+  return response()->json(['message' => 'Please login first']);
 })->name('login');
 
 /* routes and endpoints for favorites */
