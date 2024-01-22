@@ -65,11 +65,43 @@ Route::middleware('auth:sanctum')->get('/favorites', function () {
     return response()->json(['message' => 'favorite deleted successfully'], 204);
   });
   
-  
+ // Routes and endpoints for users
+
+ Route::get('/users', function () {
+    $users = DB::table('users')->get();
+    return response()->json($users);
+  });
  
-  // Routes and endpoints for users
+  Route::post('/users', function (Request $request) {
+   $validatedData = $request->validate([
+       'firstname' => 'required|max:255',
+       'lastname' => 'required|max:255',
+       'email' => 'required|email|unique:users',
+       'password' => 'required',
+       'username' => 'required|max:255',
+   ]);
  
+   $user = User::create([
+       'firstname' => $validatedData['firstname'],
+       'lastname' => $validatedData['lastname'],
+       'username' => $validatedData['username'],
+       'email' => $validatedData['email'],
+       'password' => $validatedData['password'],
+       'created_at' => now(),
+       'updated_at' => now(),
+   ]);
  
+   // Ensure the User model is using the HasApiTokens trait
+   $token = $user->createToken('auth_token')->plainTextToken;
+ 
+   // Update the remember_token in the database with the new token
+   DB::table('users')
+       ->where('id', $user->id)
+       ->update(['remember_token' => $token]);
+ 
+   return response()->json(['id' => $user->id, 'token' => $token], 201);
+ });
+
  
   // temp token routes
   Route::post('/tokens/create', function (Request $request) {
