@@ -22,13 +22,6 @@ use App\Models\User;
     return $request->user();
 }); */
 
-route::get('/hello', function () {
-    return DB::table('favorites')->get();
-});
-
-route::get('/login', function () {
-  return response()->json(['message' => 'Please login first']);
-})->name('login');
 
 /* routes and endpoints for favorites */
 
@@ -54,18 +47,12 @@ Route::middleware('auth:sanctum')->get('/favorites', function () {
   Route::put('/favorites/{id}', function (Request $request, $id) {
     $user_id = $request->user_id;
     $recipe_id = $request->recipe_id;
-    // Add other fields as necessary
-  
-    DB::update('UPDATE favorites SET user_id = ?, recipe_id = ? WHERE id = ?', [$user_id, $recipe_id, $id]);
-  
-    return response()->json(['message' => 'favorites updated successfully']);
-  });
-  
+    // To delete a favorite
   Route::delete('/favorites/{id}', function ($id) {
     DB::delete('DELETE FROM favorites WHERE id = ?', [$id]);
     return response()->json(['message' => 'favorite deleted successfully'], 204);
   });
-  
+});
  // Routes and endpoints for users
 
  Route::get('/users', function () {
