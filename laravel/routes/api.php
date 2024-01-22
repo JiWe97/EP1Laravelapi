@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 /* import db facade */
 use Illuminate\Support\Facades\DB;
 use App\Models\Favorites;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,9 +18,9 @@ use App\Models\Favorites;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+/* Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
-});
+}); */
 
 route::get('/hello', function () {
     return DB::table('favorites')->get();
@@ -73,6 +74,8 @@ Route::middleware('auth:sanctum')->get('/favorites', function () {
   });
  
   Route::post('/users', function (Request $request) {
+    // return $request->all();
+
    $validatedData = $request->validate([
        'firstname' => 'required|max:255',
        'lastname' => 'required|max:255',
@@ -80,15 +83,16 @@ Route::middleware('auth:sanctum')->get('/favorites', function () {
        'password' => 'required',
        'username' => 'required|max:255',
    ]);
+
+   // dd($validatedData['firstname']);
  
    $user = User::create([
        'firstname' => $validatedData['firstname'],
        'lastname' => $validatedData['lastname'],
        'username' => $validatedData['username'],
        'email' => $validatedData['email'],
-       'password' => $validatedData['password'],
-       'created_at' => now(),
-       'updated_at' => now(),
+       'password' => bcrypt($validatedData['password']),
+
    ]);
  
    // Ensure the User model is using the HasApiTokens trait
