@@ -30,6 +30,20 @@ route::get('/login', function () {
   return response()->json(['message' => 'Please login first']);
 })->name('login');
 
+// Route::post('/api/send', function (Request $request) {
+//   $contact = new Contact;
+//   $contact->name = $request->name;
+//   $contact->email = $request->email;
+//   $contact->message = $request->message;
+//   $contact->save();
+
+//   // Send email
+//   Mail::to('springrose007@hotmail.com')->send(new ContactMail($contact));
+
+//   return response()->json(['message' => 'Email sent successfully']);
+// });
+
+
 /* routes and endpoints for favorites */
 
 Route::middleware('auth:sanctum')->get('/favorites', function () {
