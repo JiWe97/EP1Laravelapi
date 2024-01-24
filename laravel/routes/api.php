@@ -25,7 +25,7 @@ use App\Models\User;
 
 /* routes and endpoints for favorites */
 
-Route::middleware('auth:sanctum')->get('/favorites', function () {
+Route::get('/favorites', function () {
     $favorites = DB::select('SELECT * FROM favorites');
     return response()->json($favorites);
   });
@@ -53,6 +53,52 @@ Route::middleware('auth:sanctum')->get('/favorites', function () {
     return response()->json(['message' => 'favorite deleted successfully'], 204);
   });
 });
+
+
+
+// Routes and endpoints for recipes
+
+/* Route::get('/recipes', function () {
+  $recipes = DB::table('recipes')->get();
+  return response()->json($recipes);
+});
+
+Route::post('/recipes', function (Request $request) {
+  $validatedData = $request->validate([
+    'title' => 'required|max:255',
+    'ingredients' => 'required|txt',
+    'steps' => 'required|txt',
+]);
+  $recipes = recipes::create([
+    'title' => $validatedData['title'],
+    'ingredients' => $validatedData['ingredients'],
+    'steps' => $validatedData['steps'],
+]);
+}); */
+
+Route::post('/recipes', function (Request $request) {
+  $title = $request->title;
+  $ingredient= $request->ingredient;
+  $step = $request->step;
+  $user_id = $request->user_id;
+  // Add other fields as necessary
+
+  DB::insert('INSERT INTO recipes (title, ingredient, step, user_id) VALUES (?, ?, ?, ?)', [$title, $ingredient, $step, $user_id]);
+  return response()->json(['message' => 'Recipe added'], 201);
+});
+
+Route::get('/recipes', function () {
+  $recipes = DB::table('recipes')->get();
+  return response()->json($recipes);
+});
+
+/* Route::get('/recipes', function () {
+  $recipes = DB::select('SELECT * FROM recipes WHERE id = ?);
+  return response()->json($recipes);
+}); */
+
+
+
  // Routes and endpoints for users
 
  Route::get('/users', function () {
