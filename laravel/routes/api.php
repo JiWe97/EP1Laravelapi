@@ -22,13 +22,6 @@ use App\Models\User;
     return $request->user();
 }); */
 
-route::get('/hello', function () {
-    return DB::table('favorites')->get();
-});
-
-route::get('/login', function () {
-  return response()->json(['message' => 'Please login first']);
-})->name('login');
 
 // Route::post('/api/send', function (Request $request) {
 //   $contact = new Contact;
@@ -46,7 +39,7 @@ route::get('/login', function () {
 
 /* routes and endpoints for favorites */
 
-Route::middleware('auth:sanctum')->get('/favorites', function () {
+Route::get('/favorites', function () {
     $favorites = DB::select('SELECT * FROM favorites');
     return response()->json($favorites);
   });
@@ -68,18 +61,58 @@ Route::middleware('auth:sanctum')->get('/favorites', function () {
   Route::put('/favorites/{id}', function (Request $request, $id) {
     $user_id = $request->user_id;
     $recipe_id = $request->recipe_id;
-    // Add other fields as necessary
-  
-    DB::update('UPDATE favorites SET user_id = ?, recipe_id = ? WHERE id = ?', [$user_id, $recipe_id, $id]);
-  
-    return response()->json(['message' => 'favorites updated successfully']);
-  });
-  
+    // To delete a favorite
   Route::delete('/favorites/{id}', function ($id) {
     DB::delete('DELETE FROM favorites WHERE id = ?', [$id]);
     return response()->json(['message' => 'favorite deleted successfully'], 204);
   });
-  
+});
+
+
+
+// Routes and endpoints for recipes
+
+/* Route::get('/recipes', function () {
+  $recipes = DB::table('recipes')->get();
+  return response()->json($recipes);
+});
+
+Route::post('/recipes', function (Request $request) {
+  $validatedData = $request->validate([
+    'title' => 'required|max:255',
+    'ingredients' => 'required|txt',
+    'steps' => 'required|txt',
+]);
+  $recipes = recipes::create([
+    'title' => $validatedData['title'],
+    'ingredients' => $validatedData['ingredients'],
+    'steps' => $validatedData['steps'],
+]);
+}); */
+
+Route::post('/recipes', function (Request $request) {
+  $title = $request->title;
+  $ingredient= $request->ingredient;
+  $step = $request->step;
+  $user_id = $request->user_id;
+  // Add other fields as necessary
+
+  DB::insert('INSERT INTO recipes (title, ingredient, step, user_id) VALUES (?, ?, ?, ?)', [$title, $ingredient, $step, $user_id]);
+  return response()->json(['message' => 'Recipe added'], 201);
+});
+
+Route::get('/recipes', function () {
+  $recipes = DB::table('recipes')->get();
+  return response()->json($recipes);
+});
+
+/* Route::get('/recipes', function () {
+  $recipes = DB::select('SELECT * FROM recipes WHERE id = ?);
+  return response()->json($recipes);
+}); */
+
+
+
  // Routes and endpoints for users
 
  Route::get('/users', function () {
