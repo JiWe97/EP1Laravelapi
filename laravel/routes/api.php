@@ -33,7 +33,12 @@ Route::get('/favorites', function () {
   Route::post('/favorites', function (Request $request) {
     $user_id = $request->user_id;
     $recipe_id = $request->recipe_id;
-    // Add other fields as necessary
+
+    // Check if recipe is already in favorites
+    $favorite = DB::select('SELECT * FROM favorites WHERE user_id = ? AND recipe_id = ?', [$user_id, $recipe_id]);
+    if ($favorite) {
+      return response()->json(['message' => 'Recipe already in favorites'], 409);
+    }
   
     DB::insert('INSERT INTO favorites (user_id, recipe_id) VALUES (?, ?)', [$user_id, $recipe_id]);
     return response()->json(['message' => 'Favorite added to list'], 201);
@@ -47,6 +52,7 @@ Route::get('/favorites', function () {
   Route::put('/favorites/{id}', function (Request $request, $id) {
     $user_id = $request->user_id;
     $recipe_id = $request->recipe_id;
+    
     // To delete a favorite
   Route::delete('/favorites/{id}', function ($id) {
     DB::delete('DELETE FROM favorites WHERE id = ?', [$id]);
@@ -57,24 +63,6 @@ Route::get('/favorites', function () {
 
 
 // Routes and endpoints for recipes
-
-/* Route::get('/recipes', function () {
-  $recipes = DB::table('recipes')->get();
-  return response()->json($recipes);
-});
-
-Route::post('/recipes', function (Request $request) {
-  $validatedData = $request->validate([
-    'title' => 'required|max:255',
-    'ingredients' => 'required|txt',
-    'steps' => 'required|txt',
-]);
-  $recipes = recipes::create([
-    'title' => $validatedData['title'],
-    'ingredients' => $validatedData['ingredients'],
-    'steps' => $validatedData['steps'],
-]);
-}); */
 
 Route::post('/recipes', function (Request $request) {
   $title = $request->title;
@@ -127,6 +115,16 @@ Route::get('/recipes', function () {
        'password' => bcrypt($validatedData['password']),
 
    ]);
+
+   // Check if username already exists
+   if (User::where('username', $validatedData['username'])->exists()) {
+       return response()->json(['message' => 'Username already exists'], 409);
+   }
+
+   // Check if email already exists
+   if (User::where('email', $validatedData['email'])->exists()) {
+       return response()->json(['message' => 'Email already exists'], 409);
+   }
  
    // Ensure the User model is using the HasApiTokens trait
    $token = $user->createToken('auth_token')->plainTextToken;
