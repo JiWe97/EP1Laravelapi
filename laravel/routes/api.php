@@ -94,12 +94,11 @@ Route::get('/recipes', function () {
   return response()->json($recipes);
 });
 
-/* Route::get('/recipes', function () {
-  $recipes = DB::select('SELECT * FROM recipes WHERE id = ?);
-  return response()->json($recipes);
-}); */
-
-
+// Delete recipe
+Route::post('/recipes/delete/{id}', function ($id) {
+  DB::delete('DELETE FROM recipes WHERE id = ?', [$id]);
+  return response()->json(['message' => 'Recipe deleted successfully'], 204);
+});
 
  // Routes and endpoints for users
 
