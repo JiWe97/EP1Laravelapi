@@ -63,16 +63,16 @@ Route::get('/favorites', function () {
     return response()->json($favorites);
   });
   
-  Route::put('/favorites/{id}', function (Request $request, $id) {
+  Route::post('/favorites/{id}', function (Request $request, $id) {
     $user_id = $request->user_id;
     $recipe_id = $request->recipe_id;
-    
+  });
+
     // To delete a favorite
-  Route::delete('/favorites/{id}', function ($id) {
+  Route::post('/favorites/delete/{id}', function ($id) {
     DB::delete('DELETE FROM favorites WHERE id = ?', [$id]);
     return response()->json(['message' => 'favorite deleted successfully'], 204);
   });
-});
 
 
 
